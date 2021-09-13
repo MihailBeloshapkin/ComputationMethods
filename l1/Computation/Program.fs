@@ -2,17 +2,19 @@ open System
 
 
 type Computation () =
+    
+    static member Split interval delta =
+        [fst interval .. delta .. snd interval] |> List.fold (fun acc x -> (x, x + delta) :: acc) [] |> List.tail
+
     /// Bisection method.
     static member BisectionMethod f (a : float)  (b : float) (accuracy : float) =
-        let rec sub la lb =
-            if f la = 0.0 then [la]
-            elif f lb = 0.0 then [lb]
-            elif (f la) * (f lb) < 0.0 then
-                match lb - la < accuracy with
-                | true -> [(la + lb) / 2.0] 
-                | _ -> (sub la ((la + lb) / 2.0)) @ (sub ((la + lb) / 2.0) lb)
-            else []
-        sub a b     
+        let rec sub la lb step =
+            if f la = 0.0 then la
+            elif f lb = 0.0 then lb
+            elif lb - la < accuracy then (lb + la) / 2.0
+            elif (f la) * (f ((la + lb) / 2.0)) < 0.0 then sub la ((la + lb) / 2.0) (step + 1)
+            else sub ((la + lb) / 2.0) lb (step + 1)
+        sub a b 0
 
     /// Newton method.
     static member NewtinMethod f derF (interval : float * float) (accuracy : float) = 
@@ -28,5 +30,6 @@ type Computation () =
 
 
 
+let i = Computation.Split (1.0, 2.0) 0.2
 let a = sin >> (-)0.5
 let b = tan >> (-)2.0
