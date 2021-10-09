@@ -1,3 +1,3 @@
 # ComputationMethods
 
-## This repository does not contain any valuable data. Please quit this page.
+## This repository does not contain any valuable data. Please close this page.
